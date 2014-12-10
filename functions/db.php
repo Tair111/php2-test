@@ -1,34 +1,39 @@
 <?php
+require_once  './config.php';
+config();
 
-function config()
-{
-    return include __DIR__ . '/../config.php';
-}
-
-function DBConnect()
-{
-    $config = config();
-    mysql_connect(
-        $config['db']['host'],
-        $config['db']['user'],
-        $config['db']['password']
-    );
-    mysql_select_db($config['db']['dbname']);
-}
-
+//выборка всех новостей
 function DBQuery($sql)
-{
-    DBConnect();
+{  
     $res = mysql_query($sql);
-    if (!$res) {
-        echo mysql_error();
-        return [];
-    }
-
-    $ret = [];
+    if (!$res) 
+		die(mysql_error());
+      
+    $ret = array();
     while ($row = mysql_fetch_assoc($res))
     {
         $ret[] = $row;
     }
     return $ret;
 }
+
+//добавление новости
+function ADD($title, $text)
+{
+    $res = mysql_query("INSERT INTO news (title, text) VALUES ('$title', '$text')");
+    if (!res) die("DB error: ".mysql_error());
+        else
+        echo 'Статья добавлена. ID:' .mysql_insert_id();
+}
+
+//Получение конкретной статьи
+function DBArticle($sql)
+{
+    $res = mysql_query($sql);
+    if (!$res)
+        die(mysql_error());
+
+    $ret = mysql_fetch_assoc($res);
+    return $ret;
+}
+?>
